@@ -1,15 +1,63 @@
 # mysite/polls/questions.py
-from django.shortcuts import render, resolve_url
+from django.shortcuts import render, resolve_url, get_object_or_404
 from .models import Question
+from django.http import Http404
 from .models import Choice
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 
 
+def detail(request, question_id):
+    print("qiulongquan_question_id={}".format(question_id))
+    try:
+        question = Question.objects.get(id=question_id)
+    except Question.DoesNotExist:
+        # 可以抛出一个raise也可以跳转到error页面
+        # raise Http404("Question does not exist.")
+        return render(request, 'polls/error.html')
+    # django默认会返回一个带字典对象的HttpResponse对象，render 渲染 html文件的字典带着然后作为HttpResponse对象返回
+    return render(request, 'polls/detail.html', {'question': question})
+
+
+# 下面的这种写法也可以的，如果找不到就返回http404错误
+# def detail(request, question_id):
+#     question = get_object_or_404(Question, id=question_id)
+#     # django默认会返回一个带字典对象的HttpResponse对象，render 渲染 html文件的字典带着然后作为HttpResponse对象返回
+#     return render(request, 'polls/detail.html', {'question': question})
+
+
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+def results(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    context = {'question': question}
+    # django默认会返回一个带字典对象的HttpResponse对象，render 渲染 html文件的字典带着然后作为HttpResponse对象返回
+    return render(request, 'polls/results.html', context)
+
+
 def question(request):
+    print("qiulongquan_question_strat")
     question_list = Question.objects.order_by('-pub_date')[:]
     context = {'question_list': question_list}
+    # django默认会返回一个带字典对象的HttpResponse对象，render 渲染 html文件的字典带着然后作为HttpResponse对象返回
     return render(request, 'polls/question.html', context)
 
 
@@ -50,7 +98,7 @@ def choice(request):
         # print("qiulongquan_question_id={}".format(question_id))
         checkbox_status = request.POST.getlist('tags')
         # print("qiulongquan_checkbox_status={}".format(checkbox_status))
-        temp_choice = Choice(choice_text=request.POST['choice_text'], votes=checkbox_status, question_id=request.POST['question_id'])
+        temp_choice = Choice(choice_text=request.POST['choice_text'], attitude=checkbox_status, question_id=request.POST['question_id'])
         temp_choice.save()
 
     #重定向redirect

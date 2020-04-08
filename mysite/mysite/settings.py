@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.conf.global_settings import STATIC_ROOT
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print("qiulongquan_BASE_DIR={}".format(BASE_DIR))
 
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,3 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 运行 collectstatic 管理命令:
+# $ python manage.py collectstatic
+# 这将会把静态目录下的所有文件拷贝至 STATIC_ROOT 目录。
+# STATIC_ROOT = '/static_abc/files/'

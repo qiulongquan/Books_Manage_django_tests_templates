@@ -1,18 +1,27 @@
 <!DOCTYPE html>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>question_show</title>
 </head>
 <body>
+<form align=center>
+    <h1>内容</h1>
+    <div class="tiledBackground">
+        内容
+    </div>
+</form>
 <table align=center>
     <tr>
-        <td>问题</td>
-        <td>提出时间</td>
+        <td class="title_color">问题</td>
+        <td class="title_color">提出时间</td>
     </tr>
 {% for question in question_list.all %}
     <tr>
-        <td>{{ question.question_text }}</td>
+        <td><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></td>
         <td>{{ question.pub_date }}</td>
         <td><a href="{% url 'polls:replyQuestion' question.id %}">回复问题</a></td>
         <td><a href="{% url 'polls:delQuestion' question.id %}">删除问题</a></td>
@@ -23,12 +32,10 @@
     {% csrf_token %}
     <p><span>问题：</span><input type="text"  name="question_text"></p>
     <input type="submit" value="提出问题">
-</form>
 
-<HR>
-<form align=center action="{% url 'lib:index' %}" method="post" name="return">
-    {% csrf_token %}
-    <input type="submit" value="返回上一层">
+    <a href="{% url 'lib:index' %}">
+            <button type="button">返回上一层</button>
+        </a>
 </form>
 </body>
 </html>

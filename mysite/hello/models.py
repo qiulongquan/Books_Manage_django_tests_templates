@@ -7,6 +7,11 @@ class Hello(models.Model):
     def __str__(self):
         return "<{0}>".format(self.your_name)
 
+    def was_equal(self):
+        a = Hello.objects.get(pk=1)
+        print("qiulongquan_a={}".format(a.your_name))
+        return a.your_name == "kenji"
+
 
 class Qiu(models.Model):
     qiu_name = models.CharField(max_length=15)

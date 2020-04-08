@@ -27,13 +27,13 @@
     {% for choice in choice_info.all %}
     <tr>
         <td>{{ choice.choice_text }}</td>
-        <td>{{ choice.votes }}</td>
+        <td>{{ choice.attitude }}</td>
     </tr>
     {% endfor %}
 </table>
 
 <!--        for endfor if elif endif的使用例子-->
-<!--        {%for i in choice.votes%}-->
+<!--        {%for i in choice.attitude%}-->
 <!--            {% if i == '0' %}-->
 <!--            {% with str="赞同 " %}-->
 <!--{% endwith %}-->
@@ -91,12 +91,10 @@
     </p>
     <input id="question_id" name="question_id" type="hidden" value={{ question_info.id }}>
     <input type="submit" value="提交回复">
-</form>
 
-<HR>
-<form align=center action="{% url 'polls:question' %}" method="post" name="return">
-    {% csrf_token %}
-    <input type="submit" value="返回上一层">
+    <a href="{% url 'polls:question' %}">
+        <button type="button">返回上一层</button>
+    </a>
 </form>
 </body>
 </html>
